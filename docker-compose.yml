@@ -1,0 +1,89 @@
+# ============================================================================
+# ShopSphere Docker Compose Orchestration
+# Experiment 9: Multi-Container Deployment (Next.js App + MySQL + MongoDB)
+# Uses internal service hostnames (`mysql` and `mongodb`) on `shopsphere-net`
+# ============================================================================
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: shopsphere-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-shopsphere_root_password}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-shopsphere_db}
+      MYSQL_USER: ${MYSQL_USER:-shopsphere_user}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-shopsphere_password}
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - shopsphere-net
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -u $${MYSQL_USER:-shopsphere_user} -p$${MYSQL_PASSWORD:-shopsphere_password} --silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 20s
+
+  mongodb:
+    image: mongo:7.0
+    container_name: shopsphere-mongodb
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME:-shopsphere_admin}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD:-shopsphere_mongo_password}
+      MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE:-shopsphere_catalog}
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - shopsphere-net
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: shopsphere-app
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+      # Connects via Docker Compose service names (`mysql` and `mongodb`), NOT localhost
+      DATABASE_URL: mysql://${MYSQL_USER:-shopsphere_user}:${MYSQL_PASSWORD:-shopsphere_password}@mysql:3306/${MYSQL_DATABASE:-shopsphere_db}
+      MONGODB_URI: mongodb://${MONGO_INITDB_ROOT_USERNAME:-shopsphere_admin}:${MONGO_INITDB_ROOT_PASSWORD:-shopsphere_mongo_password}@mongodb:27017/${MONGO_INITDB_DATABASE:-shopsphere_catalog}?authSource=admin
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:-replace-with-at-least-32-char-random-secret-key-for-better-auth}
+      BETTER_AUTH_URL: ${BETTER_AUTH_URL:-http://localhost:3000}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
+      GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID:-}
+      GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET:-}
+      ENABLE_DEV_AUTH_SWITCHER: ${ENABLE_DEV_AUTH_SWITCHER:-true}
+      NEXT_PUBLIC_APP_NAME: "ShopSphere"
+      NEXT_PUBLIC_APP_URL: "http://localhost:3000"
+      NEXT_PUBLIC_CURRENCY_CODE: "INR"
+      NEXT_PUBLIC_CURRENCY_SYMBOL: "₹"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
+    networks:
+      - shopsphere-net
+
+volumes:
+  mysql_data:
+  mongo_data:
+
+networks:
+  shopsphere-net:
+    driver: bridge

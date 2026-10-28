@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600" fill="none">
+  <rect width="800" height="600" fill="#EEF2FF"/>
+  <rect x="330" y="210" width="140" height="140" rx="28" fill="#4F46E5" fill-opacity="0.12" stroke="#4F46E5" stroke-width="4"/>
+  <path d="M375 265H425M375 290H410" stroke="#4F46E5" stroke-width="6" stroke-linecap="round"/>
+  <text x="400" y="395" text-anchor="middle" fill="#312E81" font-family="sans-serif" font-size="22" font-weight="bold">ShopSphere Catalog Item</text>
+</svg>

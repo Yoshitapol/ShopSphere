@@ -1,0 +1,39 @@
+# Dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# Testing & coverage
+/coverage
+
+# Next.js build output
+/.next/
+/out/
+/build
+
+# Local persistence fallback cache
+/.data/
+
+# Misc
+.DS_Store
+*.pem
+thumbs.db
+
+# Debug logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Environment variable security (Experiment 10)
+# Ignore all local/production .env files except .env.example
+.env
+.env.*
+!.env.example
+
+# Vercel / deployment
+.vercel
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts

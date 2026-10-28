@@ -1,0 +1,204 @@
+// ============================================================================
+// ShopSphere Prisma Schema (MySQL Transactional Database)
+// Experiment 5: Prisma, MySQL, Relationships, and ACID Transactions
+// Experiment 7: Better Auth User/Session/Account/Verification Schema
+// Experiment 8: Role-Based Access Control (GUEST, CUSTOMER, ADMIN)
+// ============================================================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  GUEST
+  CUSTOMER
+  ADMIN
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  SIMULATED_PAID
+  PENDING
+  FAILED
+}
+
+// ----------------------------------------------------------------------------
+// Better Auth Core Models + Application Role (Experiment 7 & 8)
+// ----------------------------------------------------------------------------
+model User {
+  id            String    @id @default(cuid())
+  name          String
+  email         String    @unique
+  emailVerified Boolean   @default(false)
+  image         String?   @db.Text
+  role          UserRole  @default(CUSTOMER)
+  phone         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  sessions      Session[]
+  accounts      Account[]
+  orders        Order[]
+
+  @@index([email])
+  @@index([role])
+  @@map("user")
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  expiresAt DateTime
+  token     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?  @db.Text
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([token])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id @default(cuid())
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?   @db.Text
+  refreshToken          String?   @db.Text
+  idToken               String?   @db.Text
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?   @db.Text
+  password              String?   @db.Text
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@index([userId])
+  @@unique([providerId, accountId])
+  @@map("account")
+}
+
+model Verification {
+  id         String    @id @default(cuid())
+  identifier String
+  value      String    @db.Text
+  expiresAt  DateTime
+  createdAt  DateTime? @default(now())
+  updatedAt  DateTime? @updatedAt
+
+  @@index([identifier])
+  @@map("verification")
+}
+
+// ----------------------------------------------------------------------------
+// Relational E-Commerce & Inventory Models (Experiment 5)
+// ----------------------------------------------------------------------------
+model Category {
+  id          String          @id @default(cuid())
+  name        String          @unique
+  slug        String          @unique
+  description String          @db.Text
+  iconName    String          @default("Package")
+  isActive    Boolean         @default(true)
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  inventory   InventoryItem[]
+
+  @@index([slug])
+  @@map("category")
+}
+
+// Relational Inventory Record linked via stable `catalogProductId` to MongoDB Product Document
+model InventoryItem {
+  id               String      @id @default(cuid())
+  catalogProductId String      @unique
+  sku              String      @unique
+  productName      String
+  unitPriceInr     Float
+  stockQuantity    Int         @default(0)
+  reservedQuantity Int         @default(0)
+  reorderThreshold Int         @default(5)
+  isAvailable      Boolean     @default(true)
+  categoryId       String
+  category         Category    @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+
+  orderItems       OrderItem[]
+
+  @@index([catalogProductId])
+  @@index([sku])
+  @@index([categoryId])
+  @@map("inventory_item")
+}
+
+model Order {
+  id                String        @id @default(cuid())
+  orderNumber       String        @unique
+  userId            String
+  user              User          @relation(fields: [userId], references: [id], onDelete: Restrict)
+  status            OrderStatus   @default(CONFIRMED)
+  paymentStatus     PaymentStatus @default(SIMULATED_PAID)
+  paymentMethod     String        @default("SIMULATED_UPI_CARD")
+  subtotalInr       Float
+  taxInr            Float
+  shippingInr       Float
+  totalInr          Float
+  recipientName     String
+  recipientEmail    String
+  recipientPhone    String
+  shippingAddress   String        @db.Text
+  shippingCity      String
+  shippingState     String
+  shippingPincode   String
+  notes             String?       @db.Text
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+
+  items             OrderItem[]
+
+  @@index([userId])
+  @@index([orderNumber])
+  @@index([status])
+  @@index([createdAt])
+  @@map("order")
+}
+
+model OrderItem {
+  id               String        @id @default(cuid())
+  orderId          String
+  order            Order         @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  inventoryItemId  String
+  inventoryItem    InventoryItem @relation(fields: [inventoryItemId], references: [id], onDelete: Restrict)
+  catalogProductId String
+  productName      String
+  productSlug      String
+  productImage     String        @db.Text
+  sku              String
+  quantity         Int
+  unitPriceInr     Float
+  lineTotalInr     Float
+
+  @@index([orderId])
+  @@index([inventoryItemId])
+  @@index([catalogProductId])
+  @@map("order_item")
+}

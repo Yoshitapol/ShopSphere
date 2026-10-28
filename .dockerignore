@@ -1,0 +1,19 @@
+# ============================================================================
+# ShopSphere Docker Ignore Configuration (Experiment 9 & 10)
+# Prevents node_modules, build artifacts, and local .env secrets from entering
+# the Docker build context.
+# ============================================================================
+Dockerfile
+.dockerignore
+node_modules
+npm-debug.log
+README.md
+.next
+.git
+.gitignore
+.env
+.env.*
+!.env.example
+.data
+coverage
+*.tsbuildinfo
