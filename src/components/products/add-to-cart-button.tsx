@@ -1,12 +1,8 @@
 "use client";
 
-// ============================================================================
-// ShopSphere Product Detail Quantity Selector & Add-to-Cart Client Widget
-// Experiment 1 & 2: Interactive Client Component Inside Server Detail Page
-// ============================================================================
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { ShoppingCart, Minus, Plus, Zap } from "lucide-react";
+import { ShoppingCart, Minus, Plus, Zap, AlertCircle } from "lucide-react";
 import { useCart } from "@/components/cart/cart-provider";
 import { useToast } from "@/components/ui/toast-provider";
 import type { ProductCatalogItem } from "@/types";
@@ -40,7 +36,7 @@ export function AddToCartDetailWidget({ product }: AddToCartDetailWidgetProps) {
       quantity
     );
     showToast(
-      `Added ${quantity} × "${product.name}" to your shopping cart`,
+      `Added ${quantity} × "${product.name}" to your cart`,
       "success"
     );
     if (redirectToCart) {
@@ -50,9 +46,9 @@ export function AddToCartDetailWidget({ product }: AddToCartDetailWidgetProps) {
 
   if (isOutOfStock) {
     return (
-      <div className="rounded-2xl border border-rose-200 bg-rose-50 p-4 text-sm font-semibold text-rose-700">
-        This item is currently out of stock in the relational inventory. Check
-        back soon!
+      <div className="flex items-center gap-2.5 rounded-xl border border-danger-200 bg-danger-50 p-4 text-sm font-semibold text-danger-700">
+        <AlertCircle className="h-4 w-4 shrink-0" />
+        <span>Currently out of stock. Check back soon for restock updates.</span>
       </div>
     );
   }
@@ -60,42 +56,44 @@ export function AddToCartDetailWidget({ product }: AddToCartDetailWidgetProps) {
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-4">
-        <span className="text-xs font-bold uppercase tracking-wider text-slate-600">
+        <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
           Quantity
         </span>
-        <div className="inline-flex items-center rounded-xl border border-slate-200 bg-white">
+        <div className="inline-flex items-center rounded-xl border border-slate-200 bg-slate-50 p-0.5">
           <button
             type="button"
             onClick={() => setQuantity((q) => Math.max(1, q - 1))}
             disabled={quantity <= 1}
-            className="p-2.5 text-slate-600 hover:bg-slate-50 disabled:opacity-40"
+            className="flex h-8 w-8 items-center justify-center rounded-lg bg-white text-ink-700 shadow-xs hover:bg-slate-100 disabled:opacity-40 transition"
             aria-label="Decrease quantity"
           >
-            <Minus className="h-4 w-4" />
+            <Minus className="h-3.5 w-3.5" />
           </button>
-          <span className="w-10 text-center text-sm font-bold text-slate-900">
+          <span className="w-10 text-center text-sm font-extrabold text-ink-900">
             {quantity}
           </span>
           <button
             type="button"
             onClick={() => setQuantity((q) => Math.min(maxAllowed, q + 1))}
             disabled={quantity >= maxAllowed}
-            className="p-2.5 text-slate-600 hover:bg-slate-50 disabled:opacity-40"
+            className="flex h-8 w-8 items-center justify-center rounded-lg bg-white text-ink-700 shadow-xs hover:bg-slate-100 disabled:opacity-40 transition"
             aria-label="Increase quantity"
           >
-            <Plus className="h-4 w-4" />
+            <Plus className="h-3.5 w-3.5" />
           </button>
         </div>
-        <span className="text-xs text-slate-500">
-          ({product.stockQuantity} units available in warehouse)
-        </span>
+        {product.stockQuantity <= product.reorderThreshold && (
+          <span className="text-xs font-bold text-warning-700">
+            Only {product.stockQuantity} left in stock
+          </span>
+        )}
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <button
           type="button"
           onClick={() => handleAdd(false)}
-          className="inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-5 py-3 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700 transition"
+          className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary-600 px-6 py-3.5 text-sm font-bold text-white shadow-sm hover:bg-primary-700 active:scale-[0.99] transition"
         >
           <ShoppingCart className="h-4 w-4" />
           Add to Cart
@@ -103,7 +101,7 @@ export function AddToCartDetailWidget({ product }: AddToCartDetailWidgetProps) {
         <button
           type="button"
           onClick={() => handleAdd(true)}
-          className="inline-flex items-center justify-center gap-2 rounded-xl border-2 border-indigo-600 bg-white px-5 py-3 text-sm font-semibold text-indigo-700 hover:bg-indigo-50 transition"
+          className="inline-flex items-center justify-center gap-2 rounded-xl bg-accent-500 px-6 py-3.5 text-sm font-bold text-white shadow-sm hover:bg-accent-600 active:scale-[0.99] transition"
         >
           <Zap className="h-4 w-4" />
           Buy Now

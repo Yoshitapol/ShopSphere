@@ -1,9 +1,5 @@
 "use client";
 
-// ============================================================================
-// ShopSphere Admin Category Manager & Demo Reset Widget
-// Experiment 5 & 14: Relational Category Management & Seed Reset
-// ============================================================================
 import React, { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { FolderPlus, RotateCcw, Loader2, Tag } from "lucide-react";
@@ -60,15 +56,15 @@ export function CategoryManager({ categories }: CategoryManagerProps) {
   };
 
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm space-y-4">
+    <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-card space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-            <Tag className="h-4 w-4 text-indigo-600" />
-            MySQL Categories ({categories.length})
+          <h2 className="text-sm font-extrabold text-ink-900 flex items-center gap-2">
+            <Tag className="h-4 w-4 text-primary-600" />
+            Store Departments ({categories.length})
           </h2>
           <p className="text-xs text-slate-500">
-            Relational categories referenced by InventoryItem foreign keys.
+            Organize products into storefront categories and departments.
           </p>
         </div>
 
@@ -77,19 +73,19 @@ export function CategoryManager({ categories }: CategoryManagerProps) {
             type="button"
             disabled={isPending}
             onClick={handleResetDemo}
-            className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-100 transition"
+            className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-bold text-ink-700 hover:bg-slate-100 transition"
           >
             <RotateCcw className="h-3.5 w-3.5" />
-            Reset Demo Seed Data
+            Restore Default Catalog
           </button>
 
           <button
             type="button"
             onClick={() => setIsOpen((v) => !v)}
-            className="inline-flex items-center gap-1.5 rounded-xl bg-indigo-50 border border-indigo-200 px-3 py-1.5 text-xs font-semibold text-indigo-700 hover:bg-indigo-100 transition"
+            className="inline-flex items-center gap-1.5 rounded-xl bg-primary-50 border border-primary-200 px-3 py-1.5 text-xs font-bold text-primary-700 hover:bg-primary-100 transition"
           >
             <FolderPlus className="h-3.5 w-3.5" />
-            {isOpen ? "Hide Form" : "New Category"}
+            {isOpen ? "Hide Form" : "New Department"}
           </button>
         </div>
       </div>
@@ -99,10 +95,10 @@ export function CategoryManager({ categories }: CategoryManagerProps) {
         {categories.map((cat) => (
           <div
             key={cat.id}
-            className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs"
+            className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50/80 px-3 py-1.5 text-xs"
           >
-            <span className="font-semibold text-slate-800">{cat.name}</span>
-            <span className="rounded-full bg-indigo-100 px-2 py-0.5 text-[10px] font-bold text-indigo-700">
+            <span className="font-bold text-ink-800">{cat.name}</span>
+            <span className="rounded-full bg-primary-100 px-2 py-0.5 text-[10px] font-extrabold text-primary-700">
               {cat.productCount ?? 0} items
             </span>
           </div>
@@ -120,8 +116,8 @@ export function CategoryManager({ categories }: CategoryManagerProps) {
             minLength={2}
             value={name}
             onChange={(e) => setName(e.target.value)}
-            placeholder="Category Name (e.g., Gaming & Peripherals)"
-            className="sm:col-span-4 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-900"
+            placeholder="Department Name (e.g., Gaming & Peripherals)"
+            className="sm:col-span-4 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-ink-900"
           />
           <input
             type="text"
@@ -129,13 +125,13 @@ export function CategoryManager({ categories }: CategoryManagerProps) {
             minLength={10}
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            placeholder="Category description (min 10 chars)..."
-            className="sm:col-span-6 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-900"
+            placeholder="Short department description (min 10 chars)..."
+            className="sm:col-span-6 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-ink-900"
           />
           <button
             type="submit"
             disabled={isPending}
-            className="sm:col-span-2 inline-flex items-center justify-center gap-1.5 rounded-xl bg-indigo-600 px-3 py-2 text-xs font-semibold text-white hover:bg-indigo-700 disabled:opacity-50"
+            className="sm:col-span-2 inline-flex items-center justify-center gap-1.5 rounded-xl bg-primary-600 px-3 py-2 text-xs font-bold text-white hover:bg-primary-700 disabled:opacity-50"
           >
             {isPending ? (
               <Loader2 className="h-3.5 w-3.5 animate-spin" />

@@ -1,8 +1,3 @@
-// ============================================================================
-// ShopSphere Admin Edit Product Page (/dashboard/products/[id]/edit)
-// Experiment 1: Async Dynamic Route Params
-// Experiment 4 & 6: Server Action Update Mutation + Cross-DB Synchronization
-// ============================================================================
 import React from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -40,16 +35,16 @@ export default async function AdminEditProductPage({
       <div>
         <Link
           href="/dashboard/products"
-          className="inline-flex items-center gap-1.5 text-xs font-semibold text-indigo-600 hover:text-indigo-700"
+          className="inline-flex items-center gap-1.5 text-xs font-bold text-primary-600 hover:text-primary-700"
         >
           <ArrowLeft className="h-3.5 w-3.5" />
           Back to Product Inventory
         </Link>
-        <h2 className="text-2xl font-extrabold text-slate-900 mt-1">
+        <h2 className="text-2xl font-extrabold text-ink-900 mt-1">
           Edit Product: {product.name}
         </h2>
         <p className="text-xs text-slate-500 mt-0.5 font-mono">
-          Catalog ID: {product.id} • SKU: {product.sku}
+          SKU: {product.sku}
         </p>
       </div>
 

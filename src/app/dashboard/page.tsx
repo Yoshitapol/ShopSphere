@@ -1,9 +1,3 @@
-// ============================================================================
-// ShopSphere Admin Dashboard Overview Page (/dashboard)
-// Experiment 2: Analytics Cards, Responsive Tables & Category Breakdown
-// Experiment 8: Protected Admin Route
-// Experiment 10: Sanitized Environment Variable Security Audit Table
-// ============================================================================
 import React from "react";
 import Link from "next/link";
 import {
@@ -14,6 +8,7 @@ import {
   PlusCircle,
   ArrowRight,
   ShieldCheck,
+  TrendingUp,
 } from "lucide-react";
 import { CategoryManager } from "@/components/dashboard/category-manager";
 import { getDashboardAnalytics } from "@/lib/prisma/order-service";
@@ -37,24 +32,24 @@ export default async function AdminDashboardOverviewPage() {
       {/* Top Action Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <span className="text-xs font-bold uppercase tracking-wider text-indigo-600">
-            Experiment 2, 5, 6 &amp; 8: Administrative Control Center
+          <span className="text-xs font-bold uppercase tracking-wider text-primary-600">
+            Store Performance &amp; Operations
           </span>
-          <h2 className="text-2xl font-extrabold text-slate-900 mt-0.5">
-            Platform Analytics &amp; Operations
+          <h2 className="text-2xl font-extrabold text-ink-900 mt-0.5">
+            Executive Overview
           </h2>
         </div>
 
         <div className="flex flex-wrap items-center gap-2.5">
           <Link
             href="/dashboard/products"
-            className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition"
+            className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-xs font-bold text-ink-800 shadow-xs hover:bg-slate-50 transition"
           >
             Manage Inventory ({analytics.totalProducts})
           </Link>
           <Link
             href="/dashboard/products/new"
-            className="inline-flex items-center gap-1.5 rounded-xl bg-indigo-600 px-4 py-2.5 text-xs font-semibold text-white shadow-sm hover:bg-indigo-700 transition"
+            className="inline-flex items-center gap-1.5 rounded-xl bg-primary-600 px-4 py-2.5 text-xs font-bold text-white shadow-sm hover:bg-primary-700 transition"
           >
             <PlusCircle className="h-4 w-4" />
             Add New Product
@@ -64,102 +59,103 @@ export default async function AdminDashboardOverviewPage() {
 
       {/* 4 Analytics Metric Cards */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-card">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
-              Gross Revenue (INR)
+              Gross Revenue
             </span>
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
-              <IndianRupee className="h-4 w-4" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary-50 text-primary-600">
+              <IndianRupee className="h-5 w-5" />
             </div>
           </div>
-          <p className="mt-3 text-2xl font-extrabold text-slate-900">
+          <p className="mt-3 text-2xl font-extrabold text-ink-900">
             {formatInr(analytics.totalRevenueInr)}
           </p>
-          <p className="mt-1 text-xs text-slate-500">
-            Across non-cancelled simulated orders
+          <p className="mt-1.5 inline-flex items-center gap-1 text-xs font-semibold text-success-700">
+            <TrendingUp className="h-3.5 w-3.5" />
+            Active storefront revenue
           </p>
         </div>
 
-        <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-card">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
               Total Orders
             </span>
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
-              <ShoppingBag className="h-4 w-4" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-success-50 text-success-600">
+              <ShoppingBag className="h-5 w-5" />
             </div>
           </div>
-          <p className="mt-3 text-2xl font-extrabold text-slate-900">
+          <p className="mt-3 text-2xl font-extrabold text-ink-900">
             {analytics.totalOrders}
           </p>
           <Link
             href="/dashboard/orders"
-            className="mt-1 inline-flex items-center gap-1 text-xs font-semibold text-indigo-600 hover:underline"
+            className="mt-1.5 inline-flex items-center gap-1 text-xs font-bold text-primary-600 hover:underline"
           >
-            Update order statuses <ArrowRight className="h-3 w-3" />
+            Manage order fulfillment <ArrowRight className="h-3 w-3" />
           </Link>
         </div>
 
-        <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-card">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
-              Catalog Products
+              Active SKUs
             </span>
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
-              <Package className="h-4 w-4" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
+              <Package className="h-5 w-5" />
             </div>
           </div>
-          <p className="mt-3 text-2xl font-extrabold text-slate-900">
+          <p className="mt-3 text-2xl font-extrabold text-ink-900">
             {analytics.totalProducts}
           </p>
-          <p className="mt-1 text-xs text-slate-500">
-            In {analytics.totalCategories} relational categories
+          <p className="mt-1.5 text-xs text-slate-500">
+            Across {analytics.totalCategories} store departments
           </p>
         </div>
 
-        <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-card">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
-              Low / Out of Stock
+              Stock Alerts
             </span>
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-50 text-amber-600">
-              <AlertTriangle className="h-4 w-4" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-warning-50 text-warning-600">
+              <AlertTriangle className="h-5 w-5" />
             </div>
           </div>
-          <p className="mt-3 text-2xl font-extrabold text-slate-900">
-            {analytics.lowStockCount} Low / {analytics.outOfStockCount} Empty
+          <p className="mt-3 text-2xl font-extrabold text-ink-900">
+            {analytics.lowStockCount} Low · {analytics.outOfStockCount} Out
           </p>
           <Link
             href="/dashboard/products"
-            className="mt-1 inline-flex items-center gap-1 text-xs font-semibold text-amber-700 hover:underline"
+            className="mt-1.5 inline-flex items-center gap-1 text-xs font-bold text-warning-700 hover:underline"
           >
-            Review reorder thresholds <ArrowRight className="h-3 w-3" />
+            Review reorder levels <ArrowRight className="h-3 w-3" />
           </Link>
         </div>
       </div>
 
-      {/* Category Management & Demo Reset Widget */}
+      {/* Category Management & Catalog Reset */}
       <CategoryManager categories={categories} />
 
-      {/* Recent Orders & Category Stock Breakdown */}
+      {/* Recent Orders & Department Stock Breakdown */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
         {/* Recent Orders Table */}
-        <div className="lg:col-span-8 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm space-y-4">
+        <div className="lg:col-span-8 rounded-2xl border border-slate-200/90 bg-white p-6 shadow-card space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-base font-bold text-slate-900">
-                Recent Transactional Orders
+              <h3 className="text-base font-extrabold text-ink-900">
+                Recent Customer Orders
               </h3>
               <p className="text-xs text-slate-500">
-                Latest orders persisted by the checkout pipeline.
+                Latest orders placed on ShopSphere
               </p>
             </div>
             <Link
               href="/dashboard/orders"
-              className="text-xs font-semibold text-indigo-600 hover:text-indigo-700 inline-flex items-center gap-1"
+              className="text-xs font-bold text-primary-600 hover:text-primary-700 inline-flex items-center gap-1"
             >
-              Manage All <ArrowRight className="h-3.5 w-3.5" />
+              View All Orders <ArrowRight className="h-3.5 w-3.5" />
             </Link>
           </div>
 
@@ -170,20 +166,28 @@ export default async function AdminDashboardOverviewPage() {
                   <th className="px-4 py-3 text-left">Order #</th>
                   <th className="px-4 py-3 text-left">Customer</th>
                   <th className="px-4 py-3 text-left">Date</th>
-                  <th className="px-4 py-3 text-right">Total (INR)</th>
+                  <th className="px-4 py-3 text-right">Amount</th>
                   <th className="px-4 py-3 text-center">Status</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-200 bg-white">
-                {analytics.recentOrders.map((order) => (
-                  <tr key={order.id} className="hover:bg-slate-50/70">
-                    <td className="px-4 py-3 font-mono font-bold text-indigo-600">
-                      <Link href={`/orders/${order.id}`} className="hover:underline">
+                {analytics.recentOrders.map((order, idx) => (
+                  <tr
+                    key={order.id}
+                    className={`${
+                      idx % 2 === 1 ? "bg-slate-50/40" : "bg-white"
+                    } hover:bg-primary-50/30 transition-colors`}
+                  >
+                    <td className="px-4 py-3 font-mono font-bold text-primary-600">
+                      <Link
+                        href={`/orders/${order.id}`}
+                        className="hover:underline"
+                      >
                         {order.orderNumber}
                       </Link>
                     </td>
                     <td className="px-4 py-3">
-                      <div className="font-semibold text-slate-900">
+                      <div className="font-bold text-ink-900">
                         {order.recipientName}
                       </div>
                       <div className="text-[11px] text-slate-500">
@@ -193,11 +197,11 @@ export default async function AdminDashboardOverviewPage() {
                     <td className="px-4 py-3 text-slate-600">
                       {formatDateTime(order.createdAt)}
                     </td>
-                    <td className="px-4 py-3 text-right font-extrabold text-slate-900">
+                    <td className="px-4 py-3 text-right font-extrabold text-ink-900">
                       {formatInr(order.totalInr)}
                     </td>
                     <td className="px-4 py-3 text-center">
-                      <span className="rounded-lg bg-indigo-50 px-2.5 py-1 text-[11px] font-bold text-indigo-700">
+                      <span className="rounded-full bg-primary-50 border border-primary-200 px-2.5 py-0.5 text-[11px] font-bold text-primary-700">
                         {order.status}
                       </span>
                     </td>
@@ -209,13 +213,13 @@ export default async function AdminDashboardOverviewPage() {
         </div>
 
         {/* Category Stock Summary */}
-        <div className="lg:col-span-4 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm space-y-4">
+        <div className="lg:col-span-4 rounded-2xl border border-slate-200/90 bg-white p-6 shadow-card space-y-4">
           <div>
-            <h3 className="text-base font-bold text-slate-900">
-              Warehouse Stock by Category
+            <h3 className="text-base font-extrabold text-ink-900">
+              Inventory by Department
             </h3>
             <p className="text-xs text-slate-500">
-              Aggregated from MySQL InventoryItem records.
+              Available units across fulfillment centers
             </p>
           </div>
 
@@ -223,13 +227,13 @@ export default async function AdminDashboardOverviewPage() {
             {analytics.categoryBreakdown.map((item) => (
               <div
                 key={item.categoryName}
-                className="flex items-center justify-between rounded-xl border border-slate-100 bg-slate-50/80 p-3 text-xs"
+                className="flex items-center justify-between rounded-xl border border-slate-100 bg-slate-50/80 p-3.5 text-xs"
               >
                 <div>
-                  <p className="font-bold text-slate-900">{item.categoryName}</p>
+                  <p className="font-bold text-ink-900">{item.categoryName}</p>
                   <p className="text-slate-500">{item.productCount} SKUs</p>
                 </div>
-                <span className="rounded-lg bg-white border border-slate-200 px-2.5 py-1 font-extrabold text-indigo-700">
+                <span className="rounded-lg bg-white border border-slate-200 px-2.5 py-1 font-extrabold text-primary-700 shadow-2xs">
                   {item.totalStock} units
                 </span>
               </div>
@@ -238,19 +242,16 @@ export default async function AdminDashboardOverviewPage() {
         </div>
       </div>
 
-      {/* Experiment 10: Sanitized Environment Variable Security Audit */}
-      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm space-y-4">
+      {/* Environment Security Configuration Audit */}
+      <div className="rounded-2xl border border-slate-200/90 bg-white p-6 shadow-card space-y-4">
         <div className="flex items-center gap-2.5">
-          <ShieldCheck className="h-5 w-5 text-indigo-600" />
+          <ShieldCheck className="h-5 w-5 text-primary-600" />
           <div>
-            <h3 className="text-base font-bold text-slate-900">
-              Experiment 10: Environment Variable Security Audit (Redacted)
+            <h3 className="text-base font-extrabold text-ink-900">
+              Security &amp; Environment Configuration Audit
             </h3>
             <p className="text-xs text-slate-500">
-              Private credentials are isolated in <code className="font-mono">server-only</code>{" "}
-              modules and redacted below. Only{" "}
-              <code className="font-mono">NEXT_PUBLIC_*</code> variables reach
-              the browser bundle.
+              Server credentials are isolated on the backend and redacted below.
             </p>
           </div>
         </div>
@@ -259,24 +260,27 @@ export default async function AdminDashboardOverviewPage() {
           <table className="min-w-full divide-y divide-slate-200 text-xs">
             <thead className="bg-slate-50 font-bold uppercase tracking-wider text-slate-500">
               <tr>
-                <th className="px-4 py-3 text-left">Variable</th>
-                <th className="px-4 py-3 text-left">Security Scope</th>
-                <th className="px-4 py-3 text-left">Redacted Preview</th>
-                <th className="px-4 py-3 text-left">Purpose</th>
+                <th className="px-4 py-3 text-left">Key</th>
+                <th className="px-4 py-3 text-left">Visibility Scope</th>
+                <th className="px-4 py-3 text-left">Redacted Value</th>
+                <th className="px-4 py-3 text-left">Description</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-200 bg-white">
-              {envAudit.map((row) => (
-                <tr key={row.variable}>
-                  <td className="px-4 py-2.5 font-mono font-bold text-slate-900">
+              {envAudit.map((row, idx) => (
+                <tr
+                  key={row.variable}
+                  className={idx % 2 === 1 ? "bg-slate-50/40" : "bg-white"}
+                >
+                  <td className="px-4 py-2.5 font-mono font-bold text-ink-900">
                     {row.variable}
                   </td>
                   <td className="px-4 py-2.5">
                     <span
-                      className={`rounded px-2 py-0.5 text-[10px] font-bold ${
+                      className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold ${
                         row.scope.includes("Server-Only")
-                          ? "bg-rose-50 text-rose-700 border border-rose-200"
-                          : "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                          ? "bg-danger-50 text-danger-700 border border-danger-200"
+                          : "bg-success-50 text-success-700 border border-success-200"
                       }`}
                     >
                       {row.scope}

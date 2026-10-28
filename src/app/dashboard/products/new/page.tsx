@@ -1,7 +1,3 @@
-// ============================================================================
-// ShopSphere Admin Create New Product Page (/dashboard/products/new)
-// Experiment 4 & 6: Server Action Form Mutation + Mongoose Schema Validation
-// ============================================================================
 import React from "react";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
@@ -21,17 +17,16 @@ export default async function AdminNewProductPage() {
         <div>
           <Link
             href="/dashboard/products"
-            className="inline-flex items-center gap-1.5 text-xs font-semibold text-indigo-600 hover:text-indigo-700"
+            className="inline-flex items-center gap-1.5 text-xs font-bold text-primary-600 hover:text-primary-700"
           >
             <ArrowLeft className="h-3.5 w-3.5" />
             Back to Product Inventory
           </Link>
-          <h2 className="text-2xl font-extrabold text-slate-900 mt-1">
-            Create New Catalog Product
+          <h2 className="text-2xl font-extrabold text-ink-900 mt-1">
+            Add New Product
           </h2>
           <p className="text-xs text-slate-500 mt-0.5">
-            Creates a MongoDB Product document with embedded specifications and
-            a linked MySQL InventoryItem row.
+            Publish a new item to the storefront catalog and set its opening warehouse stock.
           </p>
         </div>
       </div>

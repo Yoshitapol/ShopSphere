@@ -1,10 +1,5 @@
 "use client";
 
-// ============================================================================
-// ShopSphere Better Auth Sign-In, OAuth & Local Dev Workflow View
-// Experiment 7: Better Auth with Google & GitHub OAuth + Honest Setup Diagnostics
-// Experiment 8: Role-Based Access Control Personas (Guest, Customer, Admin)
-// ============================================================================
 import React, { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import {
@@ -12,12 +7,15 @@ import {
   Mail,
   Lock,
   User,
-  Sparkles,
   AlertCircle,
   CheckCircle2,
   Loader2,
-  ExternalLink,
   LogOut,
+  ShoppingBag,
+  Truck,
+  RotateCcw,
+  Award,
+  Sparkles,
 } from "lucide-react";
 import { authClient } from "@/lib/auth/auth-client";
 import {
@@ -62,14 +60,10 @@ export function LoginView({
       setErrorMessage(
         `${
           provider === "google" ? "Google" : "GitHub"
-        } OAuth client credentials (${
-          provider === "google"
-            ? "GOOGLE_CLIENT_ID / GOOGLE_CLIENT_SECRET"
-            : "GITHUB_CLIENT_ID / GITHUB_CLIENT_SECRET"
-        }) are not configured in your .env file. Follow the setup guide below or use Email/Password / Local Dev Personas for the practical demo.`
+        } social login is not configured in this environment. Please sign in with Email & Password or select a Quick Demo Login chip below.`
       );
       showToast(
-        `${provider === "google" ? "Google" : "GitHub"} OAuth credentials not set in .env`,
+        `Use Email sign-in or Quick Demo Login below`,
         "info"
       );
       return;
@@ -84,7 +78,7 @@ export function LoginView({
       setErrorMessage(
         err instanceof Error
           ? err.message
-          : `Failed to initiate ${provider} OAuth flow. Ensure MySQL is running and OAuth credentials are valid.`
+          : `Could not connect to ${provider} login. Please use email sign-in instead.`
       );
     }
   };
@@ -107,10 +101,7 @@ export function LoginView({
         return;
       }
 
-      showToast(
-        `Signed in as ${res.user.name} (${res.user.role})`,
-        "success"
-      );
+      showToast(`Welcome back, ${res.user.name}!`, "success");
       router.push(
         res.user.role === "ADMIN" && callbackUrl === "/"
           ? "/dashboard"
@@ -132,11 +123,11 @@ export function LoginView({
     startTransition(async () => {
       const res = await switchDemoPersonaAction(personaEmail);
       if (res.ok) {
-        showToast(`Authenticated as ${label}`, "success");
+        showToast(`Signed in as ${label}`, "success");
         router.push(targetRedirect);
         router.refresh();
       } else {
-        setErrorMessage(res.error || "Could not switch persona.");
+        setErrorMessage(res.error || "Could not switch account.");
       }
     });
   };
@@ -144,47 +135,120 @@ export function LoginView({
   const handleSignOut = () => {
     startTransition(async () => {
       await signOutAction();
-      showToast("Signed out of session.", "info");
+      showToast("Signed out of your account.", "info");
       router.refresh();
     });
   };
 
   return (
-    <div className="grid grid-cols-1 gap-8 lg:grid-cols-12 items-start">
-      {/* Left: Better Auth Sign-In & OAuth Card */}
-      <div className="lg:col-span-7 rounded-2xl border border-slate-200 bg-white p-6 sm:p-8 shadow-sm space-y-6">
+    <div className="overflow-hidden rounded-3xl border border-slate-200/90 bg-white shadow-card-hover grid grid-cols-1 lg:grid-cols-12">
+      {/* Left Column: Brand & Member Benefits Panel */}
+      <div className="lg:col-span-5 bg-gradient-to-br from-ink-950 via-ink-900 to-primary-950 p-8 sm:p-10 text-white flex flex-col justify-between relative overflow-hidden">
+        <div className="pointer-events-none absolute -top-20 -left-20 h-64 w-64 rounded-full bg-primary-500/20 blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-20 -right-20 h-64 w-64 rounded-full bg-accent-500/15 blur-3xl" />
+
+        <div className="relative space-y-6">
+          <div className="inline-flex items-center gap-2.5">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary-500 to-accent-500 text-white shadow-sm">
+              <ShoppingBag className="h-5 w-5" />
+            </div>
+            <span className="text-xl font-extrabold tracking-tight text-white">
+              Shop<span className="text-accent-400">Sphere</span>
+              <span className="text-xs font-bold text-primary-300">.in</span>
+            </span>
+          </div>
+
+          <div className="space-y-3 pt-2">
+            <h2 className="text-2xl sm:text-3xl font-extrabold leading-tight text-white">
+              Everything you love about tech shopping, in one place.
+            </h2>
+            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+              Sign in to unlock member-only pricing, track your deliveries in
+              real time, and download official GST invoices.
+            </p>
+          </div>
+
+          <div className="space-y-4 pt-4">
+            <div className="flex items-start gap-3">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white/10 text-accent-400">
+                <Truck className="h-4 w-4" />
+              </div>
+              <div>
+                <p className="text-xs font-bold text-white">
+                  Free Express Delivery
+                </p>
+                <p className="text-[11px] text-slate-300">
+                  Fast doorstep delivery across India on orders over ₹2,000
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-3">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white/10 text-emerald-400">
+                <Award className="h-4 w-4" />
+              </div>
+              <div>
+                <p className="text-xs font-bold text-white">
+                  100% Genuine Brand Warranty
+                </p>
+                <p className="text-[11px] text-slate-300">
+                  Authorized dealer for every brand in our catalog
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-3">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white/10 text-primary-300">
+                <RotateCcw className="h-4 w-4" />
+              </div>
+              <div>
+                <p className="text-xs font-bold text-white">
+                  Easy 7-Day Replacements
+                </p>
+                <p className="text-[11px] text-slate-300">
+                  Hassle-free returns and instant refunds
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="relative pt-8 border-t border-white/10 mt-8 text-[11px] text-slate-400 flex items-center gap-2">
+          <ShieldCheck className="h-4 w-4 text-emerald-400 shrink-0" />
+          <span>Protected by 256-bit SSL &amp; encrypted HTTP-only sessions</span>
+        </div>
+      </div>
+
+      {/* Right Column: Clean Form Card */}
+      <div className="lg:col-span-7 p-6 sm:p-10 space-y-6">
         <div className="space-y-1">
-          <span className="text-xs font-bold uppercase tracking-wider text-indigo-600">
-            Experiment 7: Better Auth + OAuth 2.0
-          </span>
-          <h1 className="text-2xl font-extrabold text-slate-900">
-            {mode === "signin"
-              ? "Sign In to ShopSphere"
-              : "Create a Customer Account"}
+          <h1 className="text-2xl font-extrabold text-ink-900">
+            {mode === "signin" ? "Sign In to Your Account" : "Create Account"}
           </h1>
-          <p className="text-xs sm:text-sm text-slate-600">
-            Authenticate via Google/GitHub OAuth, Email &amp; Password, or select
-            a seeded persona on the right for college practical demonstration.
+          <p className="text-xs sm:text-sm text-slate-500">
+            {mode === "signin"
+              ? "Welcome back! Enter your email or continue with social sign-in."
+              : "Join ShopSphere for faster checkout and exclusive member deals."}
           </p>
         </div>
 
         {/* Active Session Banner if already logged in */}
         {currentUser && (
-          <div className="rounded-xl border border-emerald-200 bg-emerald-50/80 p-4 flex flex-wrap items-center justify-between gap-3">
+          <div className="rounded-xl border border-success-200 bg-success-50 p-4 flex flex-wrap items-center justify-between gap-3">
             <div className="flex items-center gap-3">
-              <CheckCircle2 className="h-5 w-5 text-emerald-600 shrink-0" />
+              <CheckCircle2 className="h-5 w-5 text-success-600 shrink-0" />
               <div className="text-xs">
-                <p className="font-bold text-emerald-950">
-                  Active Session: {currentUser.name} ({currentUser.role})
+                <p className="font-bold text-success-800">
+                  Signed in as {currentUser.name} ({currentUser.role})
                 </p>
-                <p className="text-emerald-800">{currentUser.email}</p>
+                <p className="text-success-700">{currentUser.email}</p>
               </div>
             </div>
             <button
               type="button"
               disabled={isPending}
               onClick={handleSignOut}
-              className="inline-flex items-center gap-1.5 rounded-lg bg-white border border-emerald-300 px-3 py-1.5 text-xs font-semibold text-rose-600 hover:bg-rose-50 transition"
+              className="inline-flex items-center gap-1.5 rounded-lg bg-white border border-success-200 px-3 py-1.5 text-xs font-bold text-danger-600 hover:bg-danger-50 transition"
             >
               <LogOut className="h-3.5 w-3.5" />
               Sign Out
@@ -193,96 +257,37 @@ export function LoginView({
         )}
 
         {errorMessage && (
-          <div className="flex items-start gap-3 rounded-xl border border-rose-200 bg-rose-50 p-4 text-xs sm:text-sm text-rose-800">
-            <AlertCircle className="h-5 w-5 text-rose-600 shrink-0 mt-0.5" />
+          <div className="flex items-start gap-3 rounded-xl border border-danger-200 bg-danger-50 p-4 text-xs sm:text-sm text-danger-800">
+            <AlertCircle className="h-5 w-5 text-danger-600 shrink-0 mt-0.5" />
             <p className="leading-relaxed">{errorMessage}</p>
           </div>
         )}
 
-        {/* OAuth 2.0 Providers */}
-        <div className="space-y-3">
-          <p className="text-xs font-bold uppercase tracking-wider text-slate-500">
-            OAuth 2.0 Social Providers (Better Auth)
-          </p>
+        {/* Social Sign-In Buttons */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <button
+            type="button"
+            onClick={() => handleOAuthSignIn("google")}
+            className="flex items-center justify-center gap-2.5 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-xs font-bold text-ink-800 shadow-xs hover:bg-slate-50 transition"
+          >
+            <span className="font-extrabold text-sm text-primary-600">G</span>
+            <span>Continue with Google</span>
+          </button>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <button
-              type="button"
-              onClick={() => handleOAuthSignIn("google")}
-              className={`flex items-center justify-center gap-2.5 rounded-xl border px-4 py-2.5 text-xs font-semibold transition ${
-                googleConfigured
-                  ? "border-slate-300 bg-white text-slate-800 hover:bg-slate-50 shadow-sm"
-                  : "border-dashed border-slate-300 bg-slate-50 text-slate-500 hover:bg-slate-100"
-              }`}
-            >
-              <span className="font-extrabold text-sm text-indigo-600">G</span>
-              <span>Continue with Google</span>
-              <span
-                className={`rounded px-1.5 py-0.5 text-[10px] font-bold ${
-                  googleConfigured
-                    ? "bg-emerald-100 text-emerald-800"
-                    : "bg-amber-100 text-amber-800"
-                }`}
-              >
-                {googleConfigured ? "READY" : "NEEDS .ENV"}
-              </span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => handleOAuthSignIn("github")}
-              className={`flex items-center justify-center gap-2.5 rounded-xl border px-4 py-2.5 text-xs font-semibold transition ${
-                githubConfigured
-                  ? "border-slate-800 bg-slate-900 text-white hover:bg-slate-800 shadow-sm"
-                  : "border-dashed border-slate-300 bg-slate-50 text-slate-500 hover:bg-slate-100"
-              }`}
-            >
-              <span className="font-mono font-bold text-xs">GH</span>
-              <span>Continue with GitHub</span>
-              <span
-                className={`rounded px-1.5 py-0.5 text-[10px] font-bold ${
-                  githubConfigured
-                    ? "bg-emerald-100 text-emerald-800"
-                    : "bg-amber-100 text-amber-800"
-                }`}
-              >
-                {githubConfigured ? "READY" : "NEEDS .ENV"}
-              </span>
-            </button>
-          </div>
-
-          {(!googleConfigured || !githubConfigured) && (
-            <div className="rounded-xl border border-amber-200 bg-amber-50/70 p-3.5 text-[11px] text-amber-900 space-y-1">
-              <p className="font-bold">
-                OAuth Configuration Notice (Experiment 7 Transparency):
-              </p>
-              <p>
-                {!googleConfigured && !githubConfigured
-                  ? "Neither Google nor GitHub OAuth credentials are set in .env."
-                  : !googleConfigured
-                  ? "Google OAuth credentials are not set in .env."
-                  : "GitHub OAuth credentials are not set in .env."}{" "}
-                To enable live OAuth redirects, add{" "}
-                <code className="font-mono">GOOGLE_CLIENT_ID</code> /{" "}
-                <code className="font-mono">GITHUB_CLIENT_ID</code> in{" "}
-                <code className="font-mono">.env</code> with callback URLs{" "}
-                <code className="font-mono">
-                  http://localhost:3000/api/auth/callback/google
-                </code>{" "}
-                and{" "}
-                <code className="font-mono">
-                  http://localhost:3000/api/auth/callback/github
-                </code>
-                .
-              </p>
-            </div>
-          )}
+          <button
+            type="button"
+            onClick={() => handleOAuthSignIn("github")}
+            className="flex items-center justify-center gap-2.5 rounded-xl border border-ink-900 bg-ink-900 px-4 py-2.5 text-xs font-bold text-white shadow-xs hover:bg-ink-800 transition"
+          >
+            <span className="font-mono font-bold text-xs">GH</span>
+            <span>Continue with GitHub</span>
+          </button>
         </div>
 
         <div className="relative flex py-1 items-center">
           <div className="flex-grow border-t border-slate-200" />
-          <span className="flex-shrink mx-3 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
-            Or Email &amp; Password
+          <span className="flex-shrink mx-3 text-[11px] font-bold uppercase tracking-wider text-slate-400">
+            Or continue with email
           </span>
           <div className="flex-grow border-t border-slate-200" />
         </div>
@@ -291,46 +296,46 @@ export function LoginView({
         <form onSubmit={handleEmailAuth} className="space-y-4">
           {mode === "signup" && (
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
-                Full Name *
+              <label className="block text-xs font-bold text-ink-800 mb-1.5">
+                Full Name <span className="text-danger-600">*</span>
               </label>
               <div className="relative">
-                <User className="h-4 w-4 text-slate-400 absolute left-3.5 top-3" />
+                <User className="h-4 w-4 text-slate-400 absolute left-3.5 top-3 pointer-events-none" />
                 <input
                   type="text"
                   required
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="Ananya Sharma"
-                  className="w-full rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-4 py-2.5 text-sm text-slate-900"
+                  className="w-full rounded-xl border border-slate-200 bg-slate-50/70 pl-10 pr-4 py-2.5 text-sm text-ink-900 focus:border-primary-500 focus:bg-white"
                 />
               </div>
             </div>
           )}
 
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
-              Email Address *
+            <label className="block text-xs font-bold text-ink-800 mb-1.5">
+              Email Address <span className="text-danger-600">*</span>
             </label>
             <div className="relative">
-              <Mail className="h-4 w-4 text-slate-400 absolute left-3.5 top-3" />
+              <Mail className="h-4 w-4 text-slate-400 absolute left-3.5 top-3 pointer-events-none" />
               <input
                 type="email"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="priya.nair@shopsphere.in"
-                className="w-full rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-4 py-2.5 text-sm text-slate-900"
+                placeholder="name@example.com"
+                className="w-full rounded-xl border border-slate-200 bg-slate-50/70 pl-10 pr-4 py-2.5 text-sm text-ink-900 focus:border-primary-500 focus:bg-white"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
-              Password *
+            <label className="block text-xs font-bold text-ink-800 mb-1.5">
+              Password <span className="text-danger-600">*</span>
             </label>
             <div className="relative">
-              <Lock className="h-4 w-4 text-slate-400 absolute left-3.5 top-3" />
+              <Lock className="h-4 w-4 text-slate-400 absolute left-3.5 top-3 pointer-events-none" />
               <input
                 type="password"
                 required
@@ -338,7 +343,7 @@ export function LoginView({
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-4 py-2.5 text-sm text-slate-900"
+                className="w-full rounded-xl border border-slate-200 bg-slate-50/70 pl-10 pr-4 py-2.5 text-sm text-ink-900 focus:border-primary-500 focus:bg-white"
               />
             </div>
           </div>
@@ -346,31 +351,31 @@ export function LoginView({
           <button
             type="submit"
             disabled={isPending}
-            className="flex w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 px-5 py-3 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700 disabled:opacity-60 transition"
+            className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary-600 px-5 py-3 text-sm font-extrabold text-white shadow-sm hover:bg-primary-700 active:scale-[0.99] disabled:opacity-60 transition"
           >
             {isPending ? (
               <>
                 <Loader2 className="h-4 w-4 animate-spin" />
-                Authenticating...
+                <span>Signing In...</span>
               </>
             ) : mode === "signin" ? (
-              "Sign In with Email"
+              "Sign In"
             ) : (
-              "Create Customer Account"
+              "Create Account"
             )}
           </button>
         </form>
 
-        <div className="text-center text-xs text-slate-600 pt-1">
+        <div className="text-center text-xs text-slate-600">
           {mode === "signin" ? (
             <p>
               New to ShopSphere?{" "}
               <button
                 type="button"
                 onClick={() => setMode("signup")}
-                className="font-bold text-indigo-600 hover:underline"
+                className="font-bold text-primary-600 hover:underline"
               >
-                Create a Customer Account
+                Create an account
               </button>
             </p>
           ) : (
@@ -379,60 +384,43 @@ export function LoginView({
               <button
                 type="button"
                 onClick={() => setMode("signin")}
-                className="font-bold text-indigo-600 hover:underline"
+                className="font-bold text-primary-600 hover:underline"
               >
-                Sign In Here
+                Sign in instead
               </button>
             </p>
           )}
         </div>
-      </div>
 
-      {/* Right: Local Development Workflow & RBAC Viva Demonstration Panel */}
-      <div className="lg:col-span-5 space-y-5">
+        {/* Compact Quick Demo Login Chips Below the Form */}
         {enableDevSwitcher && (
-          <div className="rounded-2xl border border-indigo-200 bg-white p-6 shadow-sm space-y-4">
-            <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-indigo-600">
-              <Sparkles className="h-4 w-4" />
-              Local Development Workflow (Exp 7 &amp; 8)
+          <div className="border-t border-slate-100 pt-5 space-y-2.5">
+            <div className="flex items-center justify-between text-xs">
+              <span className="inline-flex items-center gap-1.5 font-bold text-slate-500">
+                <Sparkles className="h-3.5 w-3.5 text-accent-500" />
+                Quick Demo Login
+              </span>
+              <span className="text-[11px] text-slate-400">
+                1-click instant sign-in
+              </span>
             </div>
 
-            <h2 className="text-lg font-bold text-slate-900">
-              1-Click Practical &amp; Viva Demo Accounts
-            </h2>
-
-            <p className="text-xs text-slate-600 leading-relaxed">
-              During a college lab practical when external OAuth keys are not
-              configured, select any seeded persona below. This issues a{" "}
-              <strong className="text-slate-800">
-                server-signed HTTP-only HMAC session cookie
-              </strong>{" "}
-              (never stored in <code className="font-mono">localStorage</code>).
-            </p>
-
-            <div className="space-y-2.5 pt-1">
+            <div className="flex flex-wrap gap-2">
               <button
                 type="button"
                 disabled={isPending}
                 onClick={() =>
                   handleQuickPersona(
                     "priya.nair@shopsphere.in",
-                    "Priya Nair (Customer)",
+                    "Priya Nair",
                     callbackUrl || "/products"
                   )
                 }
-                className="w-full flex items-center justify-between rounded-xl border border-emerald-200 bg-emerald-50/70 p-3.5 text-left hover:bg-emerald-100/70 transition"
+                className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-semibold text-ink-800 hover:border-primary-300 hover:bg-primary-50/50 transition"
               >
-                <div>
-                  <p className="text-xs font-bold text-slate-900">
-                    Priya Nair — Customer Account #1
-                  </p>
-                  <p className="text-[11px] text-slate-600">
-                    priya.nair@shopsphere.in • Has order SPH-2026-1001
-                  </p>
-                </div>
-                <span className="rounded-lg bg-emerald-600 px-2.5 py-1 text-[10px] font-bold text-white">
-                  CUSTOMER
+                <span>Priya Nair</span>
+                <span className="rounded bg-success-100 px-1.5 py-0.5 text-[10px] font-bold text-success-800">
+                  Customer
                 </span>
               </button>
 
@@ -442,22 +430,15 @@ export function LoginView({
                 onClick={() =>
                   handleQuickPersona(
                     "rohan.deshmukh@shopsphere.in",
-                    "Rohan Deshmukh (Customer)",
+                    "Rohan Deshmukh",
                     callbackUrl || "/orders"
                   )
                 }
-                className="w-full flex items-center justify-between rounded-xl border border-emerald-200 bg-emerald-50/70 p-3.5 text-left hover:bg-emerald-100/70 transition"
+                className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-semibold text-ink-800 hover:border-primary-300 hover:bg-primary-50/50 transition"
               >
-                <div>
-                  <p className="text-xs font-bold text-slate-900">
-                    Rohan Deshmukh — Customer Account #2
-                  </p>
-                  <p className="text-[11px] text-slate-600">
-                    rohan.deshmukh@shopsphere.in • Has order SPH-2026-1002
-                  </p>
-                </div>
-                <span className="rounded-lg bg-emerald-600 px-2.5 py-1 text-[10px] font-bold text-white">
-                  CUSTOMER
+                <span>Rohan Deshmukh</span>
+                <span className="rounded bg-success-100 px-1.5 py-0.5 text-[10px] font-bold text-success-800">
+                  Customer
                 </span>
               </button>
 
@@ -471,56 +452,16 @@ export function LoginView({
                     "/dashboard"
                   )
                 }
-                className="w-full flex items-center justify-between rounded-xl border border-indigo-200 bg-indigo-50/80 p-3.5 text-left hover:bg-indigo-100/80 transition"
+                className="inline-flex items-center gap-2 rounded-xl border border-primary-200 bg-primary-50/60 px-3 py-2 text-xs font-bold text-primary-800 hover:bg-primary-100/70 transition"
               >
-                <div>
-                  <p className="text-xs font-bold text-slate-900">
-                    Aarav Mehta — Platform Administrator
-                  </p>
-                  <p className="text-[11px] text-slate-600">
-                    admin@shopsphere.in • Full CRUD &amp; Dashboard Access
-                  </p>
-                </div>
-                <span className="rounded-lg bg-indigo-600 px-2.5 py-1 text-[10px] font-bold text-white">
-                  ADMIN
+                <span>Aarav Mehta</span>
+                <span className="rounded bg-primary-600 px-1.5 py-0.5 text-[10px] font-bold text-white">
+                  Store Admin
                 </span>
               </button>
             </div>
           </div>
         )}
-
-        {/* Security & Cookie Architecture Note */}
-        <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm space-y-2.5 text-xs text-slate-600">
-          <div className="flex items-center gap-2 font-bold text-slate-900">
-            <ShieldCheck className="h-4 w-4 text-indigo-600" />
-            Session &amp; RBAC Security Guarantees (Exp 7, 8 &amp; 10)
-          </div>
-          <ul className="list-disc list-inside space-y-1 leading-relaxed">
-            <li>
-              Session tokens are stored exclusively in{" "}
-              <code className="font-mono text-indigo-700">HttpOnly</code>,{" "}
-              <code className="font-mono text-indigo-700">SameSite=Lax</code>{" "}
-              cookies — never in <code className="font-mono">localStorage</code>.
-            </li>
-            <li>
-              User roles (<code className="font-mono">GUEST</code>,{" "}
-              <code className="font-mono">CUSTOMER</code>,{" "}
-              <code className="font-mono">ADMIN</code>) are resolved on the
-              server from MySQL / server store.
-            </li>
-            <li>
-              Better Auth API handler is mounted at{" "}
-              <a
-                href="/api/auth/ok"
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-0.5 text-indigo-600 font-semibold hover:underline"
-              >
-                /api/auth/[...all] <ExternalLink className="h-3 w-3" />
-              </a>
-            </li>
-          </ul>
-        </div>
       </div>
     </div>
   );

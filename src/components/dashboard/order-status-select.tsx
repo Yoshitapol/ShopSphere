@@ -1,9 +1,5 @@
 "use client";
 
-// ============================================================================
-// ShopSphere Admin Order Status Selector Component
-// Experiment 4 & 14: Order Status Updates via Server Actions
-// ============================================================================
 import React, { useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
@@ -53,7 +49,7 @@ export function OrderStatusSelect({
         disabled={isPending}
         onChange={handleStatusChange}
         aria-label="Update order status"
-        className="rounded-xl border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-xs font-semibold text-slate-800 focus:border-indigo-500 focus:bg-white focus:outline-none disabled:opacity-50"
+        className="rounded-xl border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-xs font-bold text-ink-800 focus:border-primary-500 focus:bg-white disabled:opacity-50"
       >
         {STATUS_OPTIONS.map((status) => (
           <option key={status} value={status}>
@@ -61,7 +57,9 @@ export function OrderStatusSelect({
           </option>
         ))}
       </select>
-      {isPending && <Loader2 className="h-3.5 w-3.5 animate-spin text-indigo-600" />}
+      {isPending && (
+        <Loader2 className="h-3.5 w-3.5 animate-spin text-primary-600" />
+      )}
     </div>
   );
 }

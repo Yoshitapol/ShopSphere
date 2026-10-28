@@ -1,10 +1,5 @@
 "use client";
 
-// ============================================================================
-// ShopSphere Create & Edit Product Form Component
-// Experiment 4: Server Actions, Zod Validation & Pending State Feedback
-// Experiment 6: Mongoose Embedded Specifications, Tags & Catalog Schema Fields
-// ============================================================================
 import React, { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -174,18 +169,18 @@ export function ProductForm({
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       {errorMessage && (
-        <div className="flex items-start gap-3 rounded-2xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-800">
-          <AlertCircle className="h-5 w-5 text-rose-600 shrink-0 mt-0.5" />
+        <div className="flex items-start gap-3 rounded-2xl border border-danger-200 bg-danger-50 p-4 text-sm text-danger-800">
+          <AlertCircle className="h-5 w-5 text-danger-600 shrink-0 mt-0.5" />
           <div>
-            <p className="font-bold">Validation or Database Error</p>
+            <p className="font-bold">Please check the form fields</p>
             <p className="mt-0.5">{errorMessage}</p>
           </div>
         </div>
       )}
 
       {successMessage && (
-        <div className="flex items-start gap-3 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-800">
-          <CheckCircle2 className="h-5 w-5 text-emerald-600 shrink-0 mt-0.5" />
+        <div className="flex items-start gap-3 rounded-2xl border border-success-200 bg-success-50 p-4 text-sm text-success-800">
+          <CheckCircle2 className="h-5 w-5 text-success-600 shrink-0 mt-0.5" />
           <p className="font-semibold">{successMessage}</p>
         </div>
       )}
@@ -194,15 +189,15 @@ export function ProductForm({
         {/* Main Column */}
         <div className="lg:col-span-2 space-y-6">
           {/* Card 1: Core Product Identity */}
-          <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm space-y-4">
-            <h2 className="text-base font-bold text-slate-900">
-              1. Catalog Document Identity (MongoDB / Mongoose)
+          <div className="rounded-2xl border border-slate-200/90 bg-white p-6 shadow-card space-y-4">
+            <h2 className="text-base font-extrabold text-ink-900">
+              1. Product Information
             </h2>
 
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div className="sm:col-span-2">
-                <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
-                  Product Name *
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">
+                  Product Title *
                 </label>
                 <input
                   type="text"
@@ -210,17 +205,17 @@ export function ProductForm({
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="e.g., AetherSonic Studio Pro Monitor Headphones"
-                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-sm text-slate-900 focus:border-indigo-500 focus:bg-white focus:outline-none"
+                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-sm text-ink-900 focus:border-primary-500 focus:bg-white"
                 />
                 {fieldErrors.name && (
-                  <p className="mt-1 text-xs text-rose-600">
+                  <p className="mt-1 text-xs text-danger-600">
                     {fieldErrors.name[0]}
                   </p>
                 )}
               </div>
 
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">
                   SKU Code (Unique) *
                 </label>
                 <input
@@ -229,17 +224,17 @@ export function ProductForm({
                   value={sku}
                   onChange={(e) => setSku(e.target.value.toUpperCase())}
                   placeholder="e.g., SPH-AUD-099"
-                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-sm font-mono text-slate-900 focus:border-indigo-500 focus:bg-white focus:outline-none"
+                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-sm font-mono text-ink-900 focus:border-primary-500 focus:bg-white"
                 />
                 {fieldErrors.sku && (
-                  <p className="mt-1 text-xs text-rose-600">
+                  <p className="mt-1 text-xs text-danger-600">
                     {fieldErrors.sku[0]}
                   </p>
                 )}
               </div>
 
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">
                   URL Slug (Auto-generated if blank)
                 </label>
                 <input
@@ -247,18 +242,18 @@ export function ProductForm({
                   value={slug}
                   onChange={(e) => setSlug(e.target.value)}
                   placeholder="e.g., aethersonic-studio-pro"
-                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-sm text-slate-900 focus:border-indigo-500 focus:bg-white focus:outline-none"
+                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-sm text-ink-900 focus:border-primary-500 focus:bg-white"
                 />
                 {fieldErrors.slug && (
-                  <p className="mt-1 text-xs text-rose-600">
+                  <p className="mt-1 text-xs text-danger-600">
                     {fieldErrors.slug[0]}
                   </p>
                 )}
               </div>
 
               <div className="sm:col-span-2">
-                <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
-                  Short Summary (Displayed on Cards) *
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">
+                  Short Highlights *
                 </label>
                 <input
                   type="text"
@@ -266,17 +261,17 @@ export function ProductForm({
                   value={shortDescription}
                   onChange={(e) => setShortDescription(e.target.value)}
                   placeholder="Concise 1-2 sentence highlight of key features..."
-                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-sm text-slate-900 focus:border-indigo-500 focus:bg-white focus:outline-none"
+                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-sm text-ink-900 focus:border-primary-500 focus:bg-white"
                 />
                 {fieldErrors.shortDescription && (
-                  <p className="mt-1 text-xs text-rose-600">
+                  <p className="mt-1 text-xs text-danger-600">
                     {fieldErrors.shortDescription[0]}
                   </p>
                 )}
               </div>
 
               <div className="sm:col-span-2">
-                <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">
                   Detailed Description *
                 </label>
                 <textarea
@@ -284,11 +279,11 @@ export function ProductForm({
                   required
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  placeholder="Full technical overview, build quality, and use cases..."
-                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-sm text-slate-900 focus:border-indigo-500 focus:bg-white focus:outline-none"
+                  placeholder="Full overview, build quality, and use cases..."
+                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-sm text-ink-900 focus:border-primary-500 focus:bg-white"
                 />
                 {fieldErrors.description && (
-                  <p className="mt-1 text-xs text-rose-600">
+                  <p className="mt-1 text-xs text-danger-600">
                     {fieldErrors.description[0]}
                   </p>
                 )}
@@ -296,22 +291,21 @@ export function ProductForm({
             </div>
           </div>
 
-          {/* Card 2: Embedded Mongoose Specifications */}
-          <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm space-y-4">
+          {/* Card 2: Technical Specifications */}
+          <div className="rounded-2xl border border-slate-200/90 bg-white p-6 shadow-card space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <h2 className="text-base font-bold text-slate-900">
-                  2. Embedded Technical Specifications (Experiment 6)
+                <h2 className="text-base font-extrabold text-ink-900">
+                  2. Technical Specifications
                 </h2>
                 <p className="text-xs text-slate-500">
-                  Stored as embedded subdocuments inside the MongoDB Product
-                  document.
+                  Displayed in the product detail specifications table.
                 </p>
               </div>
               <button
                 type="button"
                 onClick={handleAddSpec}
-                className="inline-flex items-center gap-1.5 rounded-xl border border-indigo-200 bg-indigo-50 px-3 py-1.5 text-xs font-semibold text-indigo-700 hover:bg-indigo-100 transition"
+                className="inline-flex items-center gap-1.5 rounded-xl border border-primary-200 bg-primary-50 px-3 py-1.5 text-xs font-bold text-primary-700 hover:bg-primary-100 transition"
               >
                 <Plus className="h-3.5 w-3.5" />
                 Add Spec Row
@@ -331,7 +325,7 @@ export function ProductForm({
                       handleSpecChange(idx, "label", e.target.value)
                     }
                     placeholder="Label (e.g., Driver Size)"
-                    className="sm:col-span-5 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-900"
+                    className="sm:col-span-5 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-ink-900"
                   />
                   <input
                     type="text"
@@ -340,12 +334,12 @@ export function ProductForm({
                       handleSpecChange(idx, "value", e.target.value)
                     }
                     placeholder="Value (e.g., 40mm Neodymium)"
-                    className="sm:col-span-6 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-900"
+                    className="sm:col-span-6 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-ink-900"
                   />
                   <button
                     type="button"
                     onClick={() => handleRemoveSpec(idx)}
-                    className="sm:col-span-1 inline-flex items-center justify-center rounded-xl p-2 text-slate-400 hover:bg-rose-50 hover:text-rose-600"
+                    className="sm:col-span-1 inline-flex items-center justify-center rounded-xl p-2 text-slate-400 hover:bg-danger-50 hover:text-danger-600"
                     aria-label="Remove specification"
                   >
                     <Trash2 className="h-4 w-4" />
@@ -356,16 +350,16 @@ export function ProductForm({
           </div>
         </div>
 
-        {/* Right Sidebar Column: Pricing, Relational Stock & Image */}
+        {/* Right Sidebar Column: Pricing, Stock & Image */}
         <div className="space-y-6">
-          {/* Card 3: Relational Inventory & Pricing */}
-          <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm space-y-4">
-            <h2 className="text-base font-bold text-slate-900">
-              3. Pricing (₹ INR) &amp; MySQL Stock
+          {/* Card 3: Pricing & Stock */}
+          <div className="rounded-2xl border border-slate-200/90 bg-white p-6 shadow-card space-y-4">
+            <h2 className="text-base font-extrabold text-ink-900">
+              3. Pricing (₹ INR) &amp; Inventory
             </h2>
 
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">
                 Selling Price (₹ INR) *
               </label>
               <input
@@ -375,18 +369,18 @@ export function ProductForm({
                 value={priceInr}
                 onChange={(e) => setPriceInr(e.target.value)}
                 placeholder="14999"
-                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2 text-sm font-bold text-slate-900"
+                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2 text-sm font-bold text-ink-900"
               />
               {fieldErrors.priceInr && (
-                <p className="mt-1 text-xs text-rose-600">
+                <p className="mt-1 text-xs text-danger-600">
                   {fieldErrors.priceInr[0]}
                 </p>
               )}
             </div>
 
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
-                Original MRP (₹ INR, Optional)
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">
+                MRP (₹ INR, Optional)
               </label>
               <input
                 type="number"
@@ -394,18 +388,18 @@ export function ProductForm({
                 value={originalPriceInr}
                 onChange={(e) => setOriginalPriceInr(e.target.value)}
                 placeholder="18999"
-                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2 text-sm text-slate-900"
+                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2 text-sm text-ink-900"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
-                Relational Category *
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">
+                Store Department *
               </label>
               <select
                 value={categoryId}
                 onChange={(e) => setCategoryId(e.target.value)}
-                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2 text-sm text-slate-900"
+                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2 text-sm text-ink-900"
               >
                 {categories.map((cat) => (
                   <option key={cat.id} value={cat.id}>
@@ -417,7 +411,7 @@ export function ProductForm({
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">
                   Stock Units *
                 </label>
                 <input
@@ -426,12 +420,12 @@ export function ProductForm({
                   required
                   value={stockQuantity}
                   onChange={(e) => setStockQuantity(e.target.value)}
-                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-bold text-slate-900"
+                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-bold text-ink-900"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">
                   Low-Stock Alert
                 </label>
                 <input
@@ -439,43 +433,43 @@ export function ProductForm({
                   min="0"
                   value={reorderThreshold}
                   onChange={(e) => setReorderThreshold(e.target.value)}
-                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900"
+                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-ink-900"
                 />
               </div>
             </div>
 
             <div className="grid grid-cols-1 gap-3 pt-1">
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">
                   Brand
                 </label>
                 <input
                   type="text"
                   value={brand}
                   onChange={(e) => setBrand(e.target.value)}
-                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900"
+                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-ink-900"
                 />
               </div>
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">
                   Warranty
                 </label>
                 <input
                   type="text"
                   value={warranty}
                   onChange={(e) => setWarranty(e.target.value)}
-                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900"
+                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-ink-900"
                 />
               </div>
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">
                   Search Tags (Comma separated)
                 </label>
                 <input
                   type="text"
                   value={tagsInput}
                   onChange={(e) => setTagsInput(e.target.value)}
-                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-900"
+                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-ink-900"
                 />
               </div>
             </div>
@@ -485,17 +479,17 @@ export function ProductForm({
                 type="checkbox"
                 checked={featured}
                 onChange={(e) => setFeatured(e.target.checked)}
-                className="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                className="h-4 w-4 rounded border-slate-300 text-primary-600 focus:ring-primary-500"
               />
-              <span className="text-xs font-semibold text-slate-800">
-                Feature on Storefront Homepage
+              <span className="text-xs font-bold text-ink-800">
+                Feature in Deals of the Day
               </span>
             </label>
           </div>
 
           {/* Card 4: Image Preview */}
-          <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm space-y-3">
-            <h2 className="text-base font-bold text-slate-900">
+          <div className="rounded-2xl border border-slate-200/90 bg-white p-6 shadow-card space-y-3">
+            <h2 className="text-base font-extrabold text-ink-900">
               4. Product Image URL
             </h2>
             <input
@@ -504,15 +498,16 @@ export function ProductForm({
               value={imageUrl}
               onChange={(e) => setImageUrl(e.target.value)}
               placeholder="https://images.unsplash.com/..."
-              className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-900"
+              className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-ink-900"
             />
             {fieldErrors.images && (
-              <p className="text-xs text-rose-600">{fieldErrors.images[0]}</p>
+              <p className="text-xs text-danger-600">{fieldErrors.images[0]}</p>
             )}
-            <div className="aspect-[4/3] w-full overflow-hidden rounded-xl border border-slate-200 bg-slate-100">
+            <div className="aspect-square w-full overflow-hidden rounded-xl border border-slate-200 bg-slate-50 p-4">
               <ProductImage
                 src={imageUrl}
                 alt={name || "Product Preview"}
+                fit="contain"
                 className="h-full w-full"
               />
             </div>
@@ -522,7 +517,7 @@ export function ProductForm({
           <div className="flex items-center gap-3">
             <Link
               href="/dashboard/products"
-              className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-100 transition"
+              className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold text-ink-700 hover:bg-slate-100 transition"
             >
               <ArrowLeft className="h-4 w-4" />
               Cancel
@@ -530,7 +525,7 @@ export function ProductForm({
             <button
               type="submit"
               disabled={isPending}
-              className="flex-1 inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-5 py-3 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700 disabled:opacity-60 transition"
+              className="flex-1 inline-flex items-center justify-center gap-2 rounded-xl bg-primary-600 px-5 py-3 text-sm font-bold text-white shadow-sm hover:bg-primary-700 disabled:opacity-60 transition"
             >
               {isPending ? (
                 <>
@@ -540,7 +535,7 @@ export function ProductForm({
               ) : (
                 <>
                   <Save className="h-4 w-4" />
-                  {mode === "create" ? "Create Product" : "Save Changes"}
+                  {mode === "create" ? "Publish Product" : "Save Changes"}
                 </>
               )}
             </button>

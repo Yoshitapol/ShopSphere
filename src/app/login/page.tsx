@@ -1,7 +1,3 @@
-// ============================================================================
-// ShopSphere Sign-In & OAuth Authentication Page (/login)
-// Experiment 7: Better Auth + Google/GitHub OAuth + Local Dev Personas
-// ============================================================================
 import React from "react";
 import { StorefrontLayout } from "@/components/layout/storefront-layout";
 import { LoginView } from "@/components/forms/login-view";
